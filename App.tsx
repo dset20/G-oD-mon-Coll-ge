@@ -5,6 +5,7 @@ import { EXERCISES, PROPERTIES } from './constants';
 import { GradeLevel, Exercise, StudentProgress } from './types';
 import { GeoGebraViewer } from './components/GeoGebraViewer';
 import { DemonstrationSteps } from './components/DemonstrationSteps';
+import { GeometrySearch } from './components/GeometrySearch';
 import { geminiService } from './services/geminiService';
 
 // --- Mock Data ---
@@ -28,6 +29,24 @@ const HomePage: React.FC = () => {
           Le tuteur intelligent qui transforme chaque élève en <span className="text-math-600 font-bold underline decoration-math-200">maître de la logique</span> géométrique.
         </p>
       </div>
+
+      {/* NEW: Quick Search Section */}
+      <section className="mb-16">
+        <div className="bg-gradient-to-r from-math-600 to-logic-600 p-1 rounded-[3rem] shadow-2xl">
+          <div className="bg-white p-10 rounded-[2.8rem] flex flex-col md:flex-row items-center gap-8">
+            <div className="flex-1">
+              <h2 className="text-3xl font-black text-gray-900 mb-2">Un doute sur une méthode ?</h2>
+              <p className="text-gray-500 font-medium text-lg">Demande au tuteur IA une astuce basée sur les meilleurs sites de maths.</p>
+              <Link to="/astuces" className="mt-6 inline-flex items-center gap-3 px-8 py-4 bg-math-600 text-white rounded-2xl font-black hover:bg-math-700 transition-all shadow-lg shadow-math-200">
+                <i className="fas fa-search"></i> Lancer une recherche d'astuces
+              </Link>
+            </div>
+            <div className="w-48 h-48 bg-math-50 rounded-full flex items-center justify-center text-8xl text-math-200">
+               <i className="fas fa-robot animate-bounce"></i>
+            </div>
+          </div>
+        </div>
+      </section>
 
       {/* Quick Access: Completed Exercises Section */}
       {completed.length > 0 && (
@@ -82,6 +101,22 @@ const HomePage: React.FC = () => {
           </Link>
         ))}
       </div>
+    </div>
+  );
+};
+
+// --- Tips Search Page ---
+const TipsPage: React.FC = () => {
+  return (
+    <div className="max-w-5xl mx-auto py-12 px-4">
+      <Link to="/" className="text-math-600 hover:underline mb-8 inline-flex items-center font-bold uppercase tracking-widest text-sm">
+        <i className="fas fa-arrow-left mr-2"></i> Accueil
+      </Link>
+      <div className="mb-12">
+        <h2 className="text-5xl font-black text-gray-900 mb-4 tracking-tighter">Bibliothèque d'Astuces</h2>
+        <p className="text-xl text-gray-500 font-medium">Recherche une technique de démonstration guidée par l'IA.</p>
+      </div>
+      <GeometrySearch />
     </div>
   );
 };
@@ -405,6 +440,7 @@ const App: React.FC = () => {
           </Link>
           <div className="hidden md:flex gap-10 items-center">
             <Link to="/" className="text-sm font-black text-gray-500 uppercase tracking-widest hover:text-math-600 transition-colors">Accueil</Link>
+            <Link to="/astuces" className="text-sm font-black text-gray-500 uppercase tracking-widest hover:text-math-600 transition-colors">Astuces</Link>
             <Link to="/progression" className="group flex items-center gap-3 bg-math-50 text-math-700 px-6 py-2.5 rounded-2xl hover:bg-math-600 hover:text-white transition-all font-black text-xs uppercase tracking-widest shadow-sm">
               <i className="fas fa-fire-alt text-orange-500 group-hover:text-white transition-colors"></i> Progression
             </Link>
@@ -414,6 +450,7 @@ const App: React.FC = () => {
         <main className="flex-grow">
           <Routes>
             <Route path="/" element={<HomePage />} />
+            <Route path="/astuces" element={<TipsPage />} />
             <Route path="/progression" element={<ProgressionPage />} />
             <Route path="/grade/:grade" element={<GradeRouteWrapper />} />
             <Route path="/exercise/:id" element={<ExerciseRouteWrapper />} />
@@ -431,9 +468,9 @@ const App: React.FC = () => {
             </div>
             <div className="flex flex-col gap-4">
               <h4 className="text-sm font-black text-gray-800 uppercase tracking-widest mb-2">Ressources</h4>
-              <a href="#" className="text-gray-400 hover:text-math-600 font-bold transition-colors">Méthode de rédaction</a>
-              <a href="#" className="text-gray-400 hover:text-math-600 font-bold transition-colors">Théorèmes essentiels</a>
-              <a href="#" className="text-gray-400 hover:text-math-600 font-bold transition-colors">Calculateur GeoGebra</a>
+              <a href="https://fr.khanacademy.org/math/college-geom" target="_blank" className="text-gray-400 hover:text-math-600 font-bold transition-colors">Khan Academy</a>
+              <a href="https://www.monclasseurdemaths.fr/c4" target="_blank" className="text-gray-400 hover:text-math-600 font-bold transition-colors">Mon Classeur de Maths</a>
+              <a href="https://www.maths-et-tiques.fr/" target="_blank" className="text-gray-400 hover:text-math-600 font-bold transition-colors">Maths et Tiques</a>
             </div>
             <div className="flex flex-col gap-4">
               <h4 className="text-sm font-black text-gray-800 uppercase tracking-widest mb-2">Communauté</h4>
