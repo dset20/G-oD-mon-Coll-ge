@@ -3,10 +3,47 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>GéoDémon Collège - L'excellence en Géométrie</title>
+    
+    <!-- PWA & Mobile Meta -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#0369a1">
+    <meta name="description" content="Maîtrisez la démonstration en géométrie avec l'IA.">
+    
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+      
+      body {
+        font-family: 'Plus Jakarta Sans', sans-serif;
+        -webkit-tap-highlight-color: transparent;
+      }
+
+      .custom-scrollbar::-webkit-scrollbar {
+        width: 6px;
+      }
+      .custom-scrollbar::-webkit-scrollbar-track {
+        background: transparent;
+      }
+      .custom-scrollbar::-webkit-scrollbar-thumb {
+        background: #e2e8f0;
+        border-radius: 10px;
+      }
+      
+      @keyframes float {
+        0% { transform: translateY(0px); }
+        50% { transform: translateY(-10px); }
+        100% { transform: translateY(0px); }
+      }
+      .animate-float {
+        animation: float 3s ease-in-out infinite;
+      }
+    </style>
+
     <script>
       tailwind.config = {
         darkMode: 'class',
@@ -16,16 +53,24 @@
               math: {
                 50: '#f0f9ff',
                 100: '#e0f2fe',
+                200: '#bae6fd',
                 500: '#0ea5e9',
                 600: '#0284c7',
                 700: '#0369a1',
                 800: '#075985',
+                900: '#0c4a6e',
               },
               logic: {
                 50: '#f0fdf4',
+                100: '#dcfce7',
                 500: '#22c55e',
                 600: '#16a34a',
+                700: '#15803d',
               }
+            },
+            borderRadius: {
+              '4xl': '2rem',
+              '5xl': '3rem',
             }
           }
         }
@@ -43,7 +88,7 @@
 }
 </script>
 </head>
-<body class="bg-gray-50 text-gray-900">
+<body class="bg-gray-50 text-gray-900 selection:bg-math-100 overflow-x-hidden">
     <div id="root"></div>
 </body>
 </html>

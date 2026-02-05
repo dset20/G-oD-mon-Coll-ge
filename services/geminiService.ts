@@ -30,13 +30,17 @@ export class GeminiService {
           3. Vérifie si la propriété citée est correcte et complète.
           4. Encourage la rigueur rédactionnelle.
           5. Base tes conseils sur les méthodes pédagogiques de référence (Khan Academy, Maths-et-tiques, Mon Classeur de Maths).
-          6. Réponds en français de manière bienveillante.
+          6. Réponds en français de manière bienveillante et encourageante.
         `,
+        config: {
+          temperature: 0.7,
+          topP: 0.95,
+        }
       });
-      return response.text || "Désolé, je n'ai pas pu analyser ta réponse.";
+      return response.text || "Je n'ai pas pu analyser ta réponse pour le moment. Réessaie en vérifiant tes étapes.";
     } catch (error) {
       console.error("Gemini API Error:", error);
-      return "Une erreur est survenue.";
+      return "Oups ! Une petite erreur de connexion avec mon cerveau IA. Vérifie ta connexion internet.";
     }
   }
 
@@ -51,9 +55,6 @@ export class GeminiService {
         - https://www.monclasseurdemaths.fr/c4
         - https://www.maths-et-tiques.fr/
         - https://pi.ac3j.fr/mathematiques-college
-        - https://mathovore.fr/
-        - https://www.jai20enmaths.com/
-        - https://www.geogebra.org/
 
         Structure ta réponse avec des points clés clairs et des exemples de rédaction "On sait que... Or si... alors... Donc...".`,
         config: {
@@ -61,17 +62,17 @@ export class GeminiService {
         },
       });
 
-      const text = response.text || "Aucune astuce trouvée pour ce sujet.";
+      const text = response.text || "Aucune astuce trouvée pour ce sujet précis.";
       const sources = response.candidates?.[0]?.groundingMetadata?.groundingChunks
         ?.map((chunk: any) => ({
-          title: chunk.web?.title || "Source éducative",
+          title: chunk.web?.title || "Ressource éducative",
           uri: chunk.web?.uri || "#"
         })) || [];
 
       return { text, sources };
     } catch (error) {
       console.error("Search Grounding Error:", error);
-      return { text: "Erreur lors de la recherche d'astuces.", sources: [] };
+      return { text: "Impossible de récupérer les astuces en ligne pour le moment.", sources: [] };
     }
   }
 }
