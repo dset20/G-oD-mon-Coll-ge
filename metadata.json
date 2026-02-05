@@ -1,5 +1,5 @@
 {
-  "name": "GéoDémon Collège",
+  "name": "GéoDémon Maths",
   "description": "Application pédagogique de classe mondiale pour maîtriser la démonstration en géométrie (6ème-3ème), intégrant GeoGebra et un tuteur IA basé sur Gemini.",
   "requestFramePermissions": []
 }
