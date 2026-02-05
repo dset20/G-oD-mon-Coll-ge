@@ -11,36 +11,38 @@ export class GeminiService {
   async analyzeDemonstration(
     exerciseStatement: string,
     studentInput: string,
-    expectedSolution: any
+    expectedSolution: any,
+    isConverse: boolean
   ): Promise<string> {
     try {
       const response: GenerateContentResponse = await this.ai.models.generateContent({
         model: 'gemini-3-pro-preview',
         contents: `
           Tu es un professeur de mathématiques de collège français expert en géométrie.
-          Ton but est d'aider l'élève à structurer sa démonstration selon le schéma : "Données (On sait que...) -> Propriété (Or si... alors...) -> Conclusion (Donc...)".
+          Ton but est d'aider l'élève à structurer sa démonstration : "Données -> Propriété -> Conclusion".
 
-          Exercice: ${exerciseStatement}
-          Solution attendue: ${JSON.stringify(expectedSolution)}
-          Réponse de l'élève: "${studentInput}"
+          CONTEXTE :
+          - Exercice : ${exerciseStatement}
+          - Solution attendue : ${JSON.stringify(expectedSolution)}
+          - Réponse de l'élève (JSON) : ${studentInput}
+          - Choix de l'élève : L'élève a explicitement choisi d'utiliser la ${isConverse ? "RÉCIPROQUE" : "PROPRIÉTÉ DIRECTE"}.
 
-          Directives strictes:
-          1. Ne donne pas la solution directement.
-          2. Analyse si l'élève a identifié les bonnes données.
-          3. Vérifie si la propriété citée est correcte et complète.
-          4. Encourage la rigueur rédactionnelle.
-          5. Base tes conseils sur les méthodes pédagogiques de référence (Khan Academy, Maths-et-tiques, Mon Classeur de Maths).
-          6. Réponds en français de manière bienveillante et encourageante.
+          DIRECTIVES CRITIQUES :
+          1. Analyse si le choix "${isConverse ? "Réciproque" : "Directe"}" est LOGIQUE. 
+             (Exemple : Pour prouver qu'un triangle est rectangle avec les longueurs, c'est la RÉCIPROQUE de Pythagore. Pour calculer une longueur, c'est la PROPRIÉTÉ DIRECTE).
+          2. Ne donne pas la solution.
+          3. Vérifie la rédaction "On sait que... Or... Donc...".
+          4. Sois bienveillant mais rigoureux sur la logique.
         `,
         config: {
           temperature: 0.7,
           topP: 0.95,
         }
       });
-      return response.text || "Je n'ai pas pu analyser ta réponse pour le moment. Réessaie en vérifiant tes étapes.";
+      return response.text || "Je n'ai pas pu analyser ta réponse. Réessaie.";
     } catch (error) {
       console.error("Gemini API Error:", error);
-      return "Oups ! Une petite erreur de connexion avec mon cerveau IA. Vérifie ta connexion internet.";
+      return "Erreur de connexion avec l'IA. Vérifie ta connexion.";
     }
   }
 
@@ -48,31 +50,22 @@ export class GeminiService {
     try {
       const response = await this.ai.models.generateContent({
         model: 'gemini-3-pro-preview',
-        contents: `En tant que tuteur expert en géométrie de classe mondiale, donne des astuces concrètes, des méthodes de rédaction et des rappels de cours sur le sujet suivant : "${query}". 
-        
-        Tu DOIS utiliser et citer prioritairement les informations provenant des sources suivantes :
-        - https://fr.khanacademy.org/math/college-geom
-        - https://www.monclasseurdemaths.fr/c4
-        - https://www.maths-et-tiques.fr/
-        - https://pi.ac3j.fr/mathematiques-college
-
-        Structure ta réponse avec des points clés clairs et des exemples de rédaction "On sait que... Or si... alors... Donc...".`,
+        contents: `Donne des astuces sur : "${query}". Utilise les sources officielles : Khan Academy, Maths-et-tiques, Mon Classeur de Maths.`,
         config: {
           tools: [{ googleSearch: {} }],
         },
       });
 
-      const text = response.text || "Aucune astuce trouvée pour ce sujet précis.";
+      const text = response.text || "Aucune astuce trouvée.";
       const sources = response.candidates?.[0]?.groundingMetadata?.groundingChunks
         ?.map((chunk: any) => ({
-          title: chunk.web?.title || "Ressource éducative",
+          title: chunk.web?.title || "Ressource",
           uri: chunk.web?.uri || "#"
         })) || [];
 
       return { text, sources };
     } catch (error) {
-      console.error("Search Grounding Error:", error);
-      return { text: "Impossible de récupérer les astuces en ligne pour le moment.", sources: [] };
+      return { text: "Erreur lors de la recherche.", sources: [] };
     }
   }
 }
