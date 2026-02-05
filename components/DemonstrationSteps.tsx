@@ -1,10 +1,11 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import { Property } from '../types';
-import { PROPERTIES } from '../constants';
+import { appDataService } from '../services/appDataService'; // Use the new appDataService
 
 interface DemonstrationStepsProps {
   hypotheses: string;
+  properties: Property[]; // Now passed as a prop
   property: string;
   conclusion: string;
   isConverse: boolean;
@@ -13,6 +14,7 @@ interface DemonstrationStepsProps {
 
 export const DemonstrationSteps: React.FC<DemonstrationStepsProps> = ({
   hypotheses,
+  properties, // Destructure properties prop
   property,
   conclusion,
   isConverse,
@@ -27,7 +29,7 @@ export const DemonstrationSteps: React.FC<DemonstrationStepsProps> = ({
       setSuggestion(null);
       return;
     }
-    const found = PROPERTIES.find(p => 
+    const found = properties.find(p => // Use properties prop
       p.name.toLowerCase().includes(text) || 
       text.includes(p.name.toLowerCase().split(' ')[0])
     );
@@ -36,7 +38,7 @@ export const DemonstrationSteps: React.FC<DemonstrationStepsProps> = ({
     } else {
       setSuggestion(null);
     }
-  }, [property]);
+  }, [property, properties]); // Add properties to dependency array
 
   return (
     <div className="space-y-10">
@@ -123,7 +125,7 @@ export const DemonstrationSteps: React.FC<DemonstrationStepsProps> = ({
               </button>
             </div>
             <div className="max-h-64 overflow-y-auto p-4 space-y-2 custom-scrollbar">
-              {PROPERTIES.map(p => (
+              {properties.map(p => ( // Use properties prop
                 <button
                   key={p.id}
                   onClick={() => { onChange('property', p.statement); setShowHelper(false); }}
@@ -154,3 +156,4 @@ export const DemonstrationSteps: React.FC<DemonstrationStepsProps> = ({
     </div>
   );
 };
+    

@@ -1,6 +1,12 @@
 
 import { Property, Exercise } from './types';
 
+// IMPORTANT: These constants serve as initial mock data for `appDataService.ts`.
+// In a production Tauri/Rust application with an embedded SQLite database,
+// this data would be migrated to the database, and `appDataService` would
+// fetch it directly from the Rust backend via Tauri's IPC mechanism.
+// This file will eventually be removed or contain only static configuration.
+
 export const PROPERTIES: Property[] = [
   {
     id: 'perp-parallel',
@@ -10,7 +16,7 @@ export const PROPERTIES: Property[] = [
   {
     id: 'pythagore',
     name: 'Théorème de Pythagore',
-    statement: "Dans un triangle rectangle, le carré de l'hypoténuse est égal à la somme des carrés des deux autres côtés."
+    statement: "Dans un triangle rectangle, le carré de l'hypoténuse est égal au carré des deux autres côtés."
   },
   {
     id: 'somme-angles-triangle',
@@ -219,3 +225,4 @@ export const EXERCISES: Exercise[] = [
     }
   }
 ];
+    

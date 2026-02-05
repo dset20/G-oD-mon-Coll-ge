@@ -1,12 +1,12 @@
 
 import React, { useState, useEffect } from 'react';
 import { HashRouter as Router, Routes, Route, Link, useNavigate, useParams, useLocation } from 'react-router-dom';
-import { EXERCISES, PROPERTIES } from './constants';
-import { GradeLevel, Exercise, StudentProgress } from './types';
+import { GradeLevel, Exercise, StudentProgress, Property } from './types';
 import { GeoGebraViewer } from './components/GeoGebraViewer';
 import { DemonstrationSteps } from './components/DemonstrationSteps';
 import { GeometrySearch } from './components/GeometrySearch';
 import { geminiService } from './services/geminiService';
+import { appDataService } from './services/appDataService'; // Import the new data service
 
 // --- Toast Component ---
 const Toast: React.FC<{ message: string; type: 'success' | 'info' | 'error'; onClose: () => void }> = ({ message, type, onClose }) => {
@@ -52,6 +52,15 @@ const NavItem: React.FC<{ to: string; icon: string; label: string; active?: bool
 const Sidebar: React.FC<{ isOpen: boolean; close: () => void }> = ({ isOpen, close }) => {
   const location = useLocation();
   const currentPath = location.pathname;
+  const [studentProgress, setStudentProgress] = useState<StudentProgress | null>(null);
+
+  useEffect(() => {
+    const loadProgress = async () => {
+      const progress = await appDataService.loadStudentProgress();
+      setStudentProgress(progress);
+    };
+    loadProgress();
+  }, []);
 
   return (
     <>
@@ -125,7 +134,7 @@ const Sidebar: React.FC<{ isOpen: boolean; close: () => void }> = ({ isOpen, clo
                 </div>
                 <div>
                    <p className="text-[10px] font-black text-math-400 uppercase tracking-widest">Points</p>
-                   <p className="text-2xl font-black">{MOCK_PROGRESS.points}</p>
+                   <p className="text-2xl font-black">{studentProgress?.points ?? 0}</p>
                 </div>
              </div>
           </div>
@@ -133,13 +142,6 @@ const Sidebar: React.FC<{ isOpen: boolean; close: () => void }> = ({ isOpen, clo
       </aside>
     </>
   );
-};
-
-const MOCK_PROGRESS: StudentProgress = {
-  userId: 'user-123',
-  completedExercises: ['ex-001', 'ex-002'],
-  points: 1250,
-  lastGrade: '4ème'
 };
 
 const HomePage: React.FC = () => {
@@ -267,7 +269,32 @@ const TipsPage: React.FC = () => (
 );
 
 const ProgressionPage: React.FC = () => {
-  const completed = EXERCISES.filter(ex => MOCK_PROGRESS.completedExercises.includes(ex.id));
+  const [studentProgress, setStudentProgress] = useState<StudentProgress | null>(null);
+  const [exercises, setExercises] = useState<Exercise[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const loadData = async () => {
+      setLoading(true);
+      const progress = await appDataService.loadStudentProgress();
+      const allExercises = await appDataService.loadExercises();
+      setStudentProgress(progress);
+      setExercises(allExercises);
+      setLoading(false);
+    };
+    loadData();
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="max-w-5xl mx-auto py-16 px-6 text-center text-gray-400">
+        Chargement de la progression... <i className="fas fa-spinner fa-spin ml-2"></i>
+      </div>
+    );
+  }
+
+  const completed = exercises.filter(ex => studentProgress?.completedExercises.includes(ex.id));
+
   return (
     <div className="max-w-5xl mx-auto py-16 px-6 space-y-16">
       <div className="bg-white p-12 rounded-5xl shadow-2xl shadow-math-100/50 border border-gray-100 flex flex-col md:flex-row items-center justify-between gap-12 relative overflow-hidden">
@@ -281,7 +308,7 @@ const ProgressionPage: React.FC = () => {
         </div>
         <div className="text-center md:text-right relative z-10">
           <p className="text-[10px] font-black text-gray-300 uppercase tracking-widest mb-2">Points d'Honneur</p>
-          <p className="text-8xl font-black text-math-950 tracking-tighter leading-none">{MOCK_PROGRESS.points}</p>
+          <p className="text-8xl font-black text-math-950 tracking-tighter leading-none">{studentProgress?.points ?? 0}</p>
         </div>
       </div>
       <div className="space-y-8">
@@ -310,7 +337,30 @@ const ProgressionPage: React.FC = () => {
 };
 
 const GradePage: React.FC<{ grade: string }> = ({ grade }) => {
-  const filtered = EXERCISES.filter(e => e.grade === grade);
+  const [exercises, setExercises] = useState<Exercise[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const loadExercises = async () => {
+      setLoading(true);
+      const allExercises = await appDataService.loadExercises();
+      setExercises(allExercises);
+      await appDataService.updateLastGrade(grade as GradeLevel); // Update last accessed grade
+      setLoading(false);
+    };
+    loadExercises();
+  }, [grade]);
+
+  if (loading) {
+    return (
+      <div className="max-w-5xl mx-auto py-16 px-6 text-center text-gray-400">
+        Chargement des exercices... <i className="fas fa-spinner fa-spin ml-2"></i>
+      </div>
+    );
+  }
+
+  const filtered = exercises.filter(e => e.grade === grade);
+
   return (
     <div className="max-w-5xl mx-auto py-16 px-6 space-y-16">
        <header>
@@ -341,15 +391,43 @@ const GradePage: React.FC<{ grade: string }> = ({ grade }) => {
 
 const ExercisePage: React.FC<{ id: string; showToast: any }> = ({ id, showToast }) => {
   const navigate = useNavigate();
-  const exercise = EXERCISES.find(e => e.id === id);
+  const [exercise, setExercise] = useState<Exercise | null>(null);
+  const [properties, setProperties] = useState<Property[]>([]);
+  const [loadingExercise, setLoadingExercise] = useState(true);
   const [steps, setSteps] = useState({ hypotheses: '', property: '', conclusion: '', isConverse: false });
   const [feedback, setFeedback] = useState<string | null>(null);
-  const [loading, setLoading] = useState(false);
+  const [loadingVerification, setLoadingVerification] = useState(false);
 
-  if (!exercise) return null;
+  useEffect(() => {
+    const loadExerciseAndProperties = async () => {
+      setLoadingExercise(true);
+      const loadedExercise = await appDataService.getExerciseById(id!);
+      const loadedProperties = await appDataService.loadProperties();
+      setExercise(loadedExercise || null);
+      setProperties(loadedProperties);
+      setLoadingExercise(false);
+    };
+    loadExerciseAndProperties();
+  }, [id]);
+
+  if (loadingExercise) {
+    return (
+      <div className="max-w-[1400px] mx-auto py-16 px-6 text-center text-gray-400">
+        Chargement de l'exercice... <i className="fas fa-spinner fa-spin ml-2"></i>
+      </div>
+    );
+  }
+
+  if (!exercise) {
+    return (
+      <div className="max-w-[1400px] mx-auto py-16 px-6 text-center text-red-400">
+        Exercice introuvable.
+      </div>
+    );
+  }
 
   const handleVerify = async () => {
-    setLoading(true);
+    setLoadingVerification(true);
     const { hypotheses, property, conclusion, isConverse } = steps;
     const res = await geminiService.analyzeDemonstration(
       exercise.statement, 
@@ -358,8 +436,14 @@ const ExercisePage: React.FC<{ id: string; showToast: any }> = ({ id, showToast 
       isConverse
     );
     setFeedback(res);
-    setLoading(false);
+    setLoadingVerification(false);
     showToast("Expertise terminée !");
+    
+    // Simulate completion and points award
+    if (res && !res.includes("erreur") && !res.includes("incorrecte")) { // Very basic check
+       await appDataService.completeExercise(exercise.id, 50); // Award 50 points
+       showToast("Exercice validé ! Points gagnés !", 'success');
+    }
   };
 
   return (
@@ -388,6 +472,7 @@ const ExercisePage: React.FC<{ id: string; showToast: any }> = ({ id, showToast 
            </h3>
            <DemonstrationSteps
              hypotheses={steps.hypotheses}
+             properties={properties} // Pass properties to DemonstrationSteps
              property={steps.property}
              conclusion={steps.conclusion}
              isConverse={steps.isConverse}
@@ -395,10 +480,10 @@ const ExercisePage: React.FC<{ id: string; showToast: any }> = ({ id, showToast 
            />
            <button 
              onClick={handleVerify} 
-             disabled={loading || !steps.conclusion} 
+             disabled={loadingVerification || !steps.conclusion} 
              className="w-full mt-12 py-6 bg-math-600 text-white rounded-[2rem] font-black text-xl hover:bg-math-700 hover:scale-[1.02] active:scale-95 transition-all shadow-2xl shadow-math-200 disabled:opacity-50 flex items-center justify-center group"
            >
-             {loading ? <i className="fas fa-circle-notch fa-spin mr-4"></i> : <i className="fas fa-brain-circuit mr-4 group-hover:rotate-12 transition-transform"></i>}
+             {loadingVerification ? <i className="fas fa-circle-notch fa-spin mr-4"></i> : <i className="fas fa-brain-circuit mr-4 group-hover:rotate-12 transition-transform"></i>}
              Analyser la Logique
            </button>
         </div>
