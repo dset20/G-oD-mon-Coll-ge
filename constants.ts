@@ -187,3 +187,35 @@ export const EXERCISES: Exercise[] = [
       hypotheses: ['ABC = 37°', 'A\'B\'C\' est le symétrique de ABC'],
       propertyId: 'symetrie-centrale-angle',
       conclusion: 'A\'B\'C\' = 37°'
+    }
+  },
+  {
+    id: 'ex-509',
+    title: 'Le Défi Final : La Double Preuve',
+    grade: '5ème',
+    theme: 'Mixte : Angles & Symétrie',
+    statement: "Soit un triangle ABC. On construit son symétrique A'B'C' par rapport au milieu de [BC]. On sait que l'angle BAC mesure 60°. En utilisant les propriétés de la symétrie, démontre que l'angle B'A'C' mesure 60° et que la droite (AB) est parallèle à (A'B').",
+    difficulty: 3,
+    type: 'FREE_REDACTION',
+    solution: {
+      hypotheses: ['BAC = 60°', 'A\'B\'C\' est le symétrique de ABC par rapport au milieu de [BC]'],
+      propertyId: 'symetrie-centrale-angle',
+      conclusion: 'B\'A\'C\' = 60° et (AB) // (A\'B\')'
+    }
+  },
+  {
+    id: 'ex-002',
+    title: 'Calcul de longueur avec Pythagore',
+    grade: '4ème',
+    theme: 'Triangle Rectangle',
+    statement: "ABC est un triangle rectangle en A tel que AB = 3 cm et AC = 4 cm. Calcule la longueur de l'hypoténuse BC.",
+    geogebraId: 'vmyaypbt',
+    difficulty: 2,
+    type: 'STEP_BY_STEP',
+    solution: {
+      hypotheses: ['ABC est rectangle en A', 'AB = 3', 'AC = 4'],
+      propertyId: 'pythagore',
+      conclusion: 'BC = 5'
+    }
+  }
+];

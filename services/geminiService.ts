@@ -29,7 +29,7 @@ export class GeminiService {
           2. Analyse si l'élève a identifié les bonnes données.
           3. Vérifie si la propriété citée est correcte et complète.
           4. Encourage la rigueur rédactionnelle.
-          5. Si c'est faux, donne un indice.
+          5. Base tes conseils sur les méthodes pédagogiques de référence (Khan Academy, Maths-et-tiques, Mon Classeur de Maths).
           6. Réponds en français de manière bienveillante.
         `,
       });
@@ -42,12 +42,20 @@ export class GeminiService {
 
   async getGeometryTips(query: string): Promise<{ text: string; sources: { title: string; uri: string }[] }> {
     try {
-      // Use gemini-3-pro-preview for high-quality research and grounding
       const response = await this.ai.models.generateContent({
         model: 'gemini-3-pro-preview',
-        contents: `En tant que tuteur expert en géométrie, donne des astuces concrètes, des méthodes de rédaction et des rappels de cours sur le sujet suivant : "${query}". 
-        Utilise prioritairement les ressources de sites comme Khan Academy, Mon Classeur de Maths, Maths-et-tiques, Mathovore, et Jai20enmaths. 
-        Structure ta réponse avec des points clés et des exemples de rédaction "Si... alors... donc".`,
+        contents: `En tant que tuteur expert en géométrie de classe mondiale, donne des astuces concrètes, des méthodes de rédaction et des rappels de cours sur le sujet suivant : "${query}". 
+        
+        Tu DOIS utiliser et citer prioritairement les informations provenant des sources suivantes :
+        - https://fr.khanacademy.org/math/college-geom
+        - https://www.monclasseurdemaths.fr/c4
+        - https://www.maths-et-tiques.fr/
+        - https://pi.ac3j.fr/mathematiques-college
+        - https://mathovore.fr/
+        - https://www.jai20enmaths.com/
+        - https://www.geogebra.org/
+
+        Structure ta réponse avec des points clés clairs et des exemples de rédaction "On sait que... Or si... alors... Donc...".`,
         config: {
           tools: [{ googleSearch: {} }],
         },

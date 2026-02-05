@@ -24,6 +24,8 @@ export const GeometrySearch: React.FC = () => {
     if (uri.includes('geogebra')) return 'fa-draw-polygon';
     if (uri.includes('maths-et-tiques')) return 'fa-square-root-variable';
     if (uri.includes('mathovore')) return 'fa-book-open';
+    if (uri.includes('pi.ac3j.fr')) return 'fa-pi';
+    if (uri.includes('jai20enmaths')) return 'fa-star';
     return 'fa-link';
   };
 

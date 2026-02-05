@@ -457,24 +457,30 @@ const App: React.FC = () => {
         </main>
 
         <footer className="bg-white border-t py-12 md:py-16 px-6 md:px-8 mt-12 md:mt-20">
-          <div className="max-w-6xl mx-auto grid md:grid-cols-3 gap-10 md:gap-12 text-center md:text-left">
+          <div className="max-w-6xl mx-auto grid md:grid-cols-4 gap-10 md:gap-12 text-center md:text-left">
             <div>
               <div className="flex items-center gap-3 mb-4 md:mb-6 justify-center md:justify-start">
                  <div className="w-8 h-8 bg-math-800 rounded-lg flex items-center justify-center text-white font-bold">GΔ</div>
                  <span className="text-lg md:text-xl font-black text-math-800 tracking-tight">GéoDémon</span>
               </div>
-              <p className="text-gray-400 font-medium leading-relaxed text-sm">L'excellence mathématique accessible à tous, guidée par une intelligence artificielle bienveillante.</p>
+              <p className="text-gray-400 font-medium leading-relaxed text-sm">L'excellence mathématique accessible à tous, guidée par une IA experte.</p>
             </div>
             <div className="flex flex-col gap-3 md:gap-4">
-              <h4 className="text-xs md:text-sm font-black text-gray-800 uppercase tracking-widest mb-2">Ressources</h4>
+              <h4 className="text-xs md:text-sm font-black text-gray-800 uppercase tracking-widest mb-2">Ressources Académiques</h4>
               <a href="https://fr.khanacademy.org/math/college-geom" target="_blank" className="text-xs md:text-sm text-gray-400 hover:text-math-600 font-bold transition-colors">Khan Academy</a>
               <a href="https://www.monclasseurdemaths.fr/c4" target="_blank" className="text-xs md:text-sm text-gray-400 hover:text-math-600 font-bold transition-colors">Mon Classeur de Maths</a>
               <a href="https://www.maths-et-tiques.fr/" target="_blank" className="text-xs md:text-sm text-gray-400 hover:text-math-600 font-bold transition-colors">Maths et Tiques</a>
+              <a href="https://pi.ac3j.fr/mathematiques-college" target="_blank" className="text-xs md:text-sm text-gray-400 hover:text-math-600 font-bold transition-colors">Pi.ac3j Maths</a>
+            </div>
+            <div className="flex flex-col gap-3 md:gap-4">
+              <h4 className="text-xs md:text-sm font-black text-gray-800 uppercase tracking-widest mb-2">Outils & Perfectionnement</h4>
+              <a href="https://www.geogebra.org/" target="_blank" className="text-xs md:text-sm text-gray-400 hover:text-math-600 font-bold transition-colors">GeoGebra Official</a>
+              <a href="https://mathovore.fr/" target="_blank" className="text-xs md:text-sm text-gray-400 hover:text-math-600 font-bold transition-colors">Mathovore</a>
+              <a href="https://www.jai20enmaths.com/" target="_blank" className="text-xs md:text-sm text-gray-400 hover:text-math-600 font-bold transition-colors">J'ai 20 en Maths</a>
             </div>
             <div className="flex flex-col gap-3 md:gap-4">
               <h4 className="text-xs md:text-sm font-black text-gray-800 uppercase tracking-widest mb-2">Communauté</h4>
               <a href="#" className="text-xs md:text-sm text-gray-400 hover:text-math-600 font-bold transition-colors">Forum d'entraide</a>
-              <a href="#" className="text-xs md:text-sm text-gray-400 hover:text-math-600 font-bold transition-colors">Guide Enseignants</a>
               <div className="flex justify-center md:justify-start gap-4 mt-2">
                  <i className="fab fa-twitter text-gray-300 hover:text-math-600 cursor-pointer text-xl"></i>
                  <i className="fab fa-github text-gray-300 hover:text-math-600 cursor-pointer text-xl"></i>
@@ -482,7 +488,7 @@ const App: React.FC = () => {
             </div>
           </div>
           <div className="max-w-6xl mx-auto mt-12 md:mt-16 pt-8 border-t text-center">
-            <p className="text-gray-300 text-[10px] md:text-xs font-bold uppercase tracking-widest">© 2025 GéoDémon Collège • Conçu pour la réussite scolaire</p>
+            <p className="text-gray-300 text-[10px] md:text-xs font-bold uppercase tracking-widest">© 2025 GéoDémon Collège • Excellence & Rigueur</p>
           </div>
         </footer>
       </div>
